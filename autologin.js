@@ -13,39 +13,36 @@
 
     // Wait for the page to fully load
     window.addEventListener('load', function() {
-        // Locate the password input field on the page
         const passwordField = document.querySelector('input[type="password"]');
 
-        if (passwordField) {
-            console.log("Password field found:", passwordField);
+        if (passwordField && passwordField.value !== "") {
+            const form = passwordField.closest('form');
+            if (form) {
+                console.log("Form found, attempting to auto-submit via fetch.");
 
-            // Check if Firefox has already filled in the password field
-            if (passwordField.value !== "") {
-                // Locate the nearest form element surrounding the password field
-                const form = passwordField.closest('form');
-                if (form) {
-                    console.log("Form found, attempting to auto-submit:", form);
-                    form.submit();
-                } else {
-                    console.log("No form found for the password field.");
-                }
-            } else {
-                console.log("Password field is empty, waiting for input.");
+                const formData = new FormData(form);
+
+                // Use fetch to submit the form
+                fetch(form.action, {
+                    method: form.method,
+                    body: formData,
+                    headers: {
+                        'X-CSRF-Token': formData.get('csrf_token') || '',  // Example for CSRF
+                        // Add other necessary headers here
+                    },
+                    credentials: 'include'  // Include cookies if necessary
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        console.error('Form submission failed:', response.status, response.statusText);
+                    } else {
+                        console.log('Form submitted successfully.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error during form submission:', error);
+                });
             }
-
-            // Add an event listener for any change in the password field
-            passwordField.addEventListener('input', function() {
-                console.log("Password input event detected.");
-                const form = passwordField.closest('form');
-                if (form) {
-                    console.log("Form found after input, attempting to auto-submit:", form);
-                    form.submit();
-                } else {
-                    console.log("No form found for the password field after input.");
-                }
-            });
-        } else {
-            console.log("No password field found on the page.");
         }
     });
 })();
