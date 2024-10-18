@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Auto-Submit Login Script
-// @namespace   http://yournamespace.com
+// @namespace   https://justices.me
 // @description Automatically submits a login form after Firefox autofills the password
 // @include     *://*/*   // Change this line to target specific websites if needed (e.g., *://example.com/*)
 // @version     1.0
